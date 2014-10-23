@@ -68,7 +68,7 @@ def filter_animals(animal_list):
         take_animal.append(one_genus[0])
         take_animal.append(one_genus[count_female])
         count_female = 0
-
+        
     return sorted(take_animal, key=lambda x: (x['genus'], x['name'], x['sex']))
 
 

@@ -19,10 +19,21 @@ class Integrator(object):
 
     """
 
+    tab_coeff = {2:[1, 1],
+                 3:[1,4,1],
+                 4:[1,3,3,1],
+                 5:[7,32,12,32,7],
+                 6:[19,75,50,50,75,19],
+                 7:[41,216,27,272,27,216,41],
+                 8:[751,3577,1323,2989,2989,1323,3577,751],
+                 9:[989,5888,-928,10496,-4540,10496,-928,5888,989],
+                 10:[2857,15741,1080,19344,5778,5778,19344,1080,15741,2857],
+                 11:[16067,106300,-48525,272400,-260550,427368,-260550,272400,-48525,106300,16067]}
+
     @classmethod
     def get_level_parameters(cls, level):
         """
-
+       
         :param int level: Liczba całkowita większa od jendości.
         :return: Zwraca listę współczynników dla poszczególnych puktów
                  w metodzie NC. Na przykład metoda NC stopnia 2 używa punktów
@@ -31,6 +42,9 @@ class Integrator(object):
                  [1, 3, 1] itp.
         :rtype: List of integers
         """
+        if level < 2: raise ValueError
+        
+        return cls.tab_coeff.get(level) 
 
     def __init__(self, level):
         """
@@ -64,9 +78,30 @@ class Integrator(object):
         :return: Wynik całkowania.
         :rtype: float
         """
+        coeff = self.get_level_parameters(self.level)
+        print(coeff)
+        _range = math.ceil(num_evaluations/self.level)
+        print(_range)
+        a, b = func_range
+        _sum = 0.0
+        for x1, x2 in self.generate_step(a, b, _range):
+            print(x1, x2)
+            step = (x2-x1) / self.level
+            print(step)
+            _sum += sum( a*func( x1 + i*step ) for i, a in enumerate(coeff) ) 
+            _sum *= (x2-x1)/sum(coeff)
+        return _sum
+        
+    def generate_step(self, a, b, N):
+        step = (b-a)/N
+        for i in range(1, N+1):
+            yield ( a+(i-1)*step, a+i*step )
 
 
 if __name__ == '__main__':
     i = Integrator(3)
-    print(i.integrate(math.sin, (0, 2*math.pi), 30))
-    print(i.integrate(lambda x: x*x, (0, 1), 30))
+    def tst(x):
+        print(x)
+        return math.sin(x)
+    print(i.integrate(tst, (0, math.pi), 1))
+    # print(i.integrate(lambda x: x*x, (0, 1), 30))
