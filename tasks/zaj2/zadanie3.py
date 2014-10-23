@@ -86,7 +86,7 @@ class Integrator(object):
         _sum = 0.0
         for x1, x2 in self.generate_step(a, b, _range):
             print(x1, x2)
-            step = (x2-x1) / self.level
+            step = (x2-x1) / (self.level -1)
             print(step)
             _sum += sum( a*func( x1 + i*step ) for i, a in enumerate(coeff) ) 
             _sum *= (x2-x1)/sum(coeff)
