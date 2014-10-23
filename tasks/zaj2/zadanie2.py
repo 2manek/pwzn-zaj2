@@ -2,7 +2,7 @@
 
 import pickle
 import pathlib
-
+from pprint import pprint
 
 def load_animals(large_dataset=False):
     """
@@ -18,6 +18,13 @@ def load_animals(large_dataset=False):
     with open(str(file), 'rb') as f:
         return pickle.load(f)
 
+count_female = 0
+def mass(data): 
+    global count_female
+    conv = {'Mg':1.0e6, 'kg':1.0e3, 'g':1.0, 'mg':1.0e-3}
+    mass, unit = data['mass']
+    if data['sex'] == 'female': count_female += 1
+    return (mass*conv[unit], data['sex'])
 
 def filter_animals(animal_list):
     """
@@ -51,5 +58,33 @@ def filter_animals(animal_list):
     :param animal_list:
     """
 
+
+    take_animal = []
+    genus =  { animal['genus'] for animal in animal_list }
+    for g in genus:
+        global count_female
+        one_genus = [ animal for animal in animal_list if animal['genus'] == g ]
+        one_genus = sorted(one_genus, key=mass)
+        take_animal.append(one_genus[0])
+        take_animal.append(one_genus[count_female])
+        count_female = 0
+
+    return sorted(take_animal, key=lambda x: (x['genus'], x['name'], x['sex']))
+
+
+
 if __name__ == "__main__":
-    animals = load_animals()
+    animals = load_animals(False)
+    selected = filter_animals(animals)
+
+    print(selected[0])
+    # female = 0
+    # male = 0
+    # for i in selected:
+    #   if i['sex'] == 'female':
+    #     female += 1
+    #   else:
+    #     male += 1
+
+    # print(female)
+    # print(male)
