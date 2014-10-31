@@ -79,17 +79,18 @@ class Integrator(object):
         :rtype: float
         """
         coeff = self.get_level_parameters(self.level)
-        print(coeff)
         _range = math.ceil(num_evaluations/self.level)
-        print(_range)
+
         a, b = func_range
+        h = (b-a)/_range
         _sum = 0.0
         for x1, x2 in self.generate_step(a, b, _range):
-            print(x1, x2)
-            step = (x2-x1) / (self.level -1)
-            print(step)
-            _sum += sum( a*func( x1 + i*step ) for i, a in enumerate(coeff) ) 
-            _sum *= (x2-x1)/sum(coeff)
+            step = (x2-x1) / (self.level - 1)
+            _sum += sum( a*func( x1 + i*step ) for i, a in enumerate(coeff) )
+
+        # _sum *= (self.level-1)?
+        _sum *= h/sum(coeff)
+            
         return _sum
         
     def generate_step(self, a, b, N):
@@ -99,9 +100,10 @@ class Integrator(object):
 
 
 if __name__ == '__main__':
-    i = Integrator(3)
+    i = Integrator(11)
     def tst(x):
         print(x)
         return math.sin(x)
-    print(i.integrate(tst, (0, math.pi), 1))
+    print("res = %f" % i.integrate(lambda x: math.exp(-x**2), (-100000, 100000), 300000))
+
     # print(i.integrate(lambda x: x*x, (0, 1), 30))
