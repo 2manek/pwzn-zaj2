@@ -98,12 +98,6 @@ class Integrator(object):
         for i in range(1, N+1):
             yield ( a+(i-1)*step, a+i*step )
 
-
 if __name__ == '__main__':
     i = Integrator(11)
-    def tst(x):
-        print(x)
-        return math.sin(x)
     print("res = %f" % i.integrate(lambda x: math.exp(-x**2), (-100000, 100000), 300000))
-
-    # print(i.integrate(lambda x: x*x, (0, 1), 30))
