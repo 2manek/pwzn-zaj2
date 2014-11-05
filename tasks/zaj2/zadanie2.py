@@ -24,7 +24,7 @@ def mass(data):
     conv = {'Mg':1.0e6, 'kg':1.0e3, 'g':1.0, 'mg':1.0e-3}
     mass, unit = data['mass']
     if data['sex'] == 'female': count_female += 1
-    return (mass*conv[unit], data['sex'])
+    return (data['sex'], mass*conv[unit])
 
 def filter_animals(animal_list):
     """
@@ -68,16 +68,21 @@ def filter_animals(animal_list):
         take_animal.append(one_genus[0])
         take_animal.append(one_genus[count_female])
         count_female = 0
-        
-    return sorted(take_animal, key=lambda x: (x['genus'], x['name'], x['sex']))
+    # take_animal     
+    take_animal = sorted(take_animal, key=lambda x: x['sex'], reverse=True)
+    foo = sorted(take_animal, key=lambda x: (x['genus'], x['name']))
+    # foo[8:10] = [foo[9], foo[8]]
+    return foo
+    # foo =  
 
 
 
 if __name__ == "__main__":
-    animals = load_animals(False)
+    animals = load_animals(True)
     selected = filter_animals(animals)
 
     print(selected[0])
+    print(selected[1])
     # female = 0
     # male = 0
     # for i in selected:
